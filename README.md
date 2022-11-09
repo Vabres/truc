@@ -17,19 +17,20 @@
 <!--TOC-->
 
 # Objectifs du TP
-Comment, à quoi et pourquoi créer des modules Terraform au quotidien.
-Qu'est-ce qu’un module, ou en trouver ds tout fait, structure, bonne pratiques.
+Comment et pourquoi créer des modules Terraform au quotidien.
+Qu'est-ce qu’un module, ou en trouver des tout fait, structure, bonne pratiques.
 
-=> Montrer l'intérêt d'éviter la répétition de code et de boucler sur l'appel d'un module
-=> Montrer l'intérêt de grouper un ensemble de ressources étroitement liées dans un module pour leur déploiement
-=> Montrer les différentes façon de référencer un module (local, git, registry communautaire)
+- => Montrer l'intérêt d'éviter la répétition de code et de boucler sur l'appel d'un module
+- => Montrer l'intérêt de grouper un ensemble de ressources étroitement liées dans un module pour leur déploiement
+- => Montrer les différentes façon de référencer un module (local, git, registry communautaire)
+- => Mettre en lumière les pièges à éviter
 
 # Pré-requis
 
 ## Collab
-- Version de terraform conseillée pour la compatibilité des exercices : ~> 1.0
-- terraform-docs d’installé sur leur machine
 - Set up de git sur leur machine
+- terraform-docs d’installé sur leur machine
+- Version de terraform cons eillée pour la compatibilité des exercices : ~> 1.0
 - Maîtrise de l’assume rôle AWS fédéré et l’utiliser pour déployer les ressources à travers terraform
 
 ## Formateur
@@ -41,20 +42,20 @@ Qu'est-ce qu’un module, ou en trouver ds tout fait, structure, bonne pratiques
 # Déroulé 
 
 ## Intérêt de la factorisation de code (pour les modules locaux par exemple)
-=> Montrer un code avec des copier - coller de bout de code identiques 
-=> Exercice : factoriser le code dans un module en local pour éviter cette répétition
-=> EC2 + IAM + VOLUMES + SG
+- => Montrer un code avec des copier - coller de bout de code identiques 
+- => Exercice : factoriser le code dans un module en local pour éviter cette répétition
+- => EC2 + IAM + VOLUMES + SG
 "Le nécessaire pour créer une simple EC2 bien configurée" (l’idée de rassembler un ensemble de ressources cohérentes au sein d’un même module)
 Faire utiliser le module lambda (registry) pour la syntaxe
 
 ## Créer un module en respectant les "bonnes pratiques"
-step 1 : Sortir le module local et le push sur le repo Gitlab ippon (espace perso)
-step 2: modifier l’appel local par le remote git
-step 3 : appliquer les bonnes pratiques 
-versionning 
-documentation (terraform-docs)
-structure de fichier (variables, outputs, main, fixer la version des providers)
+- Step 1 : Sortir le module local et le push sur le repo Gitlab ippon (espace perso)
+- Step 2: modifier l’appel local par le remote git
+- Step 3 : appliquer les bonnes pratiques 
+    - versionning 
+    - documentation (terraform-docs)
+    - structure de fichier (variables, outputs, main, fixer la version des providers)
 
-# Useful links 
+# Useful links
 - Doc de préparation de la formation terraform : https://docs.google.com/document/d/1UE8m4J_4Z66ZYg-gkjlobd-XGnDbmrtY6_uGOzW4Rpo/edit
 
