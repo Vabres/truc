@@ -34,7 +34,8 @@ resource "aws_instance" "instance_1" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_1.name}"]{
+  security_groups   = ["${aws_security_group.instance_1.name}"]
+  tags = {
     Name = "instance_1"
   }
 }
@@ -84,8 +85,8 @@ resource "aws_iam_role" "instance_1" {
   name        = local.iam_role_name
   description = "IAM role for the instance_1"
 
-  instance_1_assume_role_policy    = data.aws_iam_policy_document.instance_1_assume_role_policy[0].json
-  force_detach_policies = true
+  instance_1_assume_role_policy = data.aws_iam_policy_document.instance_1_assume_role_policy[0].json
+  force_detach_policies         = true
 }
 
 resource "aws_iam_role_policy" "instance_1_policy" {
@@ -148,7 +149,8 @@ resource "aws_instance" "instance_2" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_2.name}"]{
+  security_groups   = ["${aws_security_group.instance_2.name}"]
+  tags = {
     Name = "instance_2"
   }
 }
@@ -198,8 +200,8 @@ resource "aws_iam_role" "instance_2" {
   name        = local.iam_role_name
   description = "IAM role for the instance_2"
 
-  instance_2_assume_role_policy    = data.aws_iam_policy_document.instance_2_assume_role_policy[0].json
-  force_detach_policies = true
+  instance_2_assume_role_policy = data.aws_iam_policy_document.instance_2_assume_role_policy[0].json
+  force_detach_policies         = true
 }
 
 resource "aws_iam_role_policy" "instance_2_policy" {
@@ -261,7 +263,8 @@ resource "aws_instance" "instance_3" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_3.name}"]{
+  security_groups   = ["${aws_security_group.instance_3.name}"]
+  tags = {
     Name = "instance_3"
   }
 }
@@ -311,8 +314,8 @@ resource "aws_iam_role" "instance_3" {
   name        = local.iam_role_name
   description = "IAM role for the instance_3"
 
-  instance_3_assume_role_policy    = data.aws_iam_policy_document.instance_3_assume_role_policy[0].json
-  force_detach_policies = true
+  instance_3_assume_role_policy = data.aws_iam_policy_document.instance_3_assume_role_policy[0].json
+  force_detach_policies         = true
 }
 
 resource "aws_iam_role_policy" "instance_3_policy" {
