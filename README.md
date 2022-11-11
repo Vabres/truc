@@ -58,4 +58,3 @@ Faire utiliser le module lambda (registry) pour la syntaxe
 
 # Useful links
 - Doc de préparation de la formation terraform : https://docs.google.com/document/d/1UE8m4J_4Z66ZYg-gkjlobd-XGnDbmrtY6_uGOzW4Rpo/edit
-
