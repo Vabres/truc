@@ -6,11 +6,14 @@
 # Creating the security group for the instance_1
 #----------------------
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "instance_1" {
   name        = "instance_1"
   description = "allow https traffic"
 
   ingress {
+    description = "Allow public HTTPS traffic"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -18,6 +21,7 @@ resource "aws_security_group" "instance_1" {
   }
 
   egress {
+    description = "Allow any outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -34,19 +38,37 @@ resource "aws_instance" "instance_1" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_1.name}"]
+  security_groups   = [aws_security_group.instance_1.name]
+
+  root_block_device {
+    encrypted = true # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enable-at-rest-encryption/
+  }
+
+  metadata_options {
+    http_tokens = "required" # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enforce-http-token-imds/
+  }
+
   tags = {
     Name = "instance_1"
   }
 }
 
 #----------------------
-# Creating and attaching ebs volume
+# Creating and attaching an encrypted ebs volume
 #----------------------
+
+resource "aws_kms_key" "ebs_encryption_instance_1" {
+  enable_key_rotation = true
+}
+
 
 resource "aws_ebs_volume" "instance_1-data-vol" {
   availability_zone = "eu-west-3"
   size              = 1
+
+  encrypted  = true
+  kms_key_id = aws_kms_key.ebs_encryption_instance_1.arn
+
   tags = {
     Name = "instance_1-data-volume"
   }
@@ -93,6 +115,7 @@ resource "aws_iam_role_policy" "instance_1_policy" {
   name = "instance_1_policy"
   role = aws_iam_role.instance_1.id
 
+  #tfsec:ignore:aws-iam-no-policy-wildcards
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -121,11 +144,14 @@ resource "aws_iam_role_policy_attachment" "instance_1" {
 # Creating the security group for the instance_2
 #----------------------
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "instance_2" {
   name        = "instance_2"
   description = "allow https traffic"
 
   ingress {
+    description = "Allow public HTTPS traffic"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -133,6 +159,7 @@ resource "aws_security_group" "instance_2" {
   }
 
   egress {
+    description = "Allow any outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -149,19 +176,37 @@ resource "aws_instance" "instance_2" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_2.name}"]
+  security_groups   = [aws_security_group.instance_2.name]
+
+  root_block_device {
+    encrypted = true # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enable-at-rest-encryption/
+  }
+
+  metadata_options {
+    http_tokens = "required" # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enforce-http-token-imds/
+  }
+
   tags = {
     Name = "instance_2"
   }
 }
 
 #----------------------
-# Creating and attaching ebs volume
+# Creating and attaching an encrypted ebs volume
 #----------------------
+
+resource "aws_kms_key" "ebs_encryption_instance_2" {
+  enable_key_rotation = true
+}
+
 
 resource "aws_ebs_volume" "instance_2-data-vol" {
   availability_zone = "eu-west-3"
   size              = 1
+
+  encrypted  = true
+  kms_key_id = aws_kms_key.ebs_encryption_instance_2.arn
+
   tags = {
     Name = "instance_2-data-volume"
   }
@@ -208,6 +253,7 @@ resource "aws_iam_role_policy" "instance_2_policy" {
   name = "instance_2_policy"
   role = aws_iam_role.instance_2.id
 
+  #tfsec:ignore:aws-iam-no-policy-wildcards
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -235,11 +281,14 @@ resource "aws_iam_role_policy_attachment" "instance_2" {
 # Creating the security group for the instance_3
 #----------------------
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "instance_3" {
   name        = "instance_3"
   description = "allow https traffic"
 
   ingress {
+    description = "Allow public HTTPS traffic"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -247,6 +296,7 @@ resource "aws_security_group" "instance_3" {
   }
 
   egress {
+    description = "Allow any outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -263,19 +313,38 @@ resource "aws_instance" "instance_3" {
   ami               = "ami-5b673c34"
   instance_type     = "t2.micro"
   availability_zone = "eu-west-3"
-  security_groups   = ["${aws_security_group.instance_3.name}"]
+  security_groups   = [aws_security_group.instance_3.name]
+
+  root_block_device {
+    encrypted = true # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enable-at-rest-encryption/
+  }
+
+
+  metadata_options {
+    http_tokens = "required" # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enforce-http-token-imds/
+  }
+
   tags = {
     Name = "instance_3"
   }
 }
 
 #----------------------
-# Creating and attaching ebs volume
+# Creating and attaching an encrypted ebs volume
 #----------------------
+
+resource "aws_kms_key" "ebs_encryption_instance_3" {
+  enable_key_rotation = true
+}
+
 
 resource "aws_ebs_volume" "instance_3-data-vol" {
   availability_zone = "eu-west-3"
   size              = 1
+
+  encrypted  = true
+  kms_key_id = aws_kms_key.ebs_encryption_instance_3.arn
+
   tags = {
     Name = "instance_3-data-volume"
   }
@@ -322,6 +391,7 @@ resource "aws_iam_role_policy" "instance_3_policy" {
   name = "instance_3_policy"
   role = aws_iam_role.instance_3.id
 
+  #tfsec:ignore:aws-iam-no-policy-wildcards
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
