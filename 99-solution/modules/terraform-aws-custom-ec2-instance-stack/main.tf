@@ -1,19 +1,22 @@
 #----------------------
-# Creating the security group for the instance_1
+# Creating the security group for the instance
 #----------------------
 
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
 #tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "this" {
-  name        = "instance_1"
-  description = "allow https traffic"
+  name        = var.instance_name
+  description = var.sg_name
 
-  ingress {
-    description = "Allow public HTTPS traffic"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.sg_ingress_rules
+    content {
+      description = ingress.value.description
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
   }
 
   egress {
@@ -25,15 +28,14 @@ resource "aws_security_group" "this" {
   }
 }
 
-
 #----------------------
 # Creating aws instance
 #----------------------
 
 resource "aws_instance" "this" {
-  ami               = "ami-5b673c34"
+  ami               = "ami-0ee415e1b8b71305f"
   instance_type     = "t2.micro"
-  availability_zone = "eu-west-3"
+  availability_zone = "eu-west-1a"
   security_groups   = [aws_security_group.this.name]
 
   root_block_device {
@@ -41,11 +43,12 @@ resource "aws_instance" "this" {
   }
 
   metadata_options {
-    http_tokens = "required" # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enforce-http-token-imds/
+    http_endpoint = "enabled"
+    http_tokens   = "required" # see : https://aquasecurity.github.io/tfsec/v1.27.5/checks/aws/ec2/enforce-http-token-imds/
   }
 
   tags = {
-    Name = "instance_1"
+    Name = var.instance_name
   }
 }
 
@@ -59,14 +62,14 @@ resource "aws_kms_key" "this" {
 
 
 resource "aws_ebs_volume" "this" {
-  availability_zone = "eu-west-3"
+  availability_zone = "eu-west-1a"
   size              = 1
 
   encrypted  = true
   kms_key_id = aws_kms_key.this.arn
 
   tags = {
-    Name = "instance_1 volume"
+    Name = "${var.instance_name} volume"
   }
 }
 
@@ -80,14 +83,8 @@ resource "aws_volume_attachment" "this" {
 # Creating the instance_1 role and policy
 #----------------------
 
-data "aws_partition" "current" {}
-
-locals {
-  iam_role_name = "instance_1_role"
-}
 
 data "aws_iam_policy_document" "assume_role_policy" {
-
   statement {
     sid     = "EC2AssumeRole"
     actions = ["sts:AssumeRole"]
@@ -100,15 +97,15 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role" "this" {
-  name        = local.iam_role_name
-  description = "IAM role for the instance_1"
+  name        = "${var.instance_name}_role"
+  description = "IAM role for the ${var.instance_name}"
 
-  assume_role_policy    = data.aws_iam_policy_document.this_assume_role_policy[0].json
+  assume_role_policy    = data.aws_iam_policy_document.assume_role_policy.json
   force_detach_policies = true
 }
 
 resource "aws_iam_role_policy" "this" {
-  name = "instance_1 policy"
+  name = "${var.instance_name}_policy"
   role = aws_iam_role.this.id
 
   #tfsec:ignore:aws-iam-no-policy-wildcards
@@ -124,9 +121,4 @@ resource "aws_iam_role_policy" "this" {
       },
     ]
   })
-}
-
-resource "aws_iam_role_policy_attachment" "this" {
-  policy_arn = var.this_policy.arn
-  role       = aws_iam_role.this.name
 }
