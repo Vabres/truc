@@ -6,4 +6,3 @@ module "ec2_instances" {
   sg_name          = each.value.sg_name
   sg_ingress_rules = each.value.sg_ingress_rules
 }
-
